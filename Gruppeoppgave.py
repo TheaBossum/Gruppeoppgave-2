@@ -223,15 +223,24 @@ lufttrykk_sauda = []
 with open("temperatur_trykk_sauda_sinnes_samme_tidsperiode.csv.txt", "r") as fil:
     for linje in fil:
         data = linje.strip().split(";")
-        sted = data[0]
-        tid = data[2]
-        lufttemp = data[3]
-        lufttrykk = data[4]
-        if "-" in sted:
-           tid_sirdal.append(tid) 
-           lufttemp_sirdal.append()
+        if "-" in data:
+            sted1 = data[0]
+            tid1 = data[2]
+            lufttemp1 = data[3]
+            lufttrykk1 = data[4]
         else:
-           tid_sauda.append(tid) 
+           sted2 = data[0]
+           tid2 = data[2]
+           lufttemp2 = data[3]
+           lufttrykk2 = data[4] 
+           
+           tid_sirdal.append(tid1) 
+           lufttemp_sirdal.append(lufttemp1)
+           lufttrykk_sirdal.append(lufttrykk1)
+           tid_sauda.append(tid2) 
+           lufttemp_sauda.append(lufttemp2)
+           lufttrykk_sauda.append(lufttrykk2)
+            
         
         
         try:
