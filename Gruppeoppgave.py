@@ -174,10 +174,11 @@ plt.subplot(2, 1, 1)
 plt.plot(tider_met_dt, lufttemperatur_met, label="Meterologisk")
 plt.plot(tider_dt, temperatur, label="UiS")
 plt.plot(gyldige_tider, gjennomsnitt, label="Gjennomsnittstemperatur")
-plt.plot(temperaturfall_tider, temperaturfall_values, label="Temperaturfall Maksimal til Minimal")
-plt.plot(temperaturfall_tider1, temperaturfall_values1)
+plt.plot(temperaturfall_tider, temperaturfall_values, label="Temperaturfall fil 2")
+plt.plot(temperaturfall_tider1, temperaturfall_values1, label= "Temperaturfall fil 1")
 plt.xlabel("Tid")
 plt.ylabel("Temperatur")
+plt.tight_layout()
 plt.legend()
 
 
