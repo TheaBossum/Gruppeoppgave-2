@@ -192,9 +192,32 @@ plt.tight_layout()
 plt.show()
 
 
+#sammenslåtte_temperaturer = []
+#sammenslåtte_temperaturer.append(lufttemperatur_met)
+#sammenslåtte_temperaturer.append(temperatur)
+
+#plt.hist(sammenslåtte_temperaturer)
+
+plt.subplot(1, 2, 1)
+plt.hist(lufttemperatur_met, color='skyblue', edgecolor='black', alpha=0.9, label='Meteorologiske målinger')
+plt.subplot(1, 2, 2)
+plt.hist(temperatur, color='salmon', edgecolor='black', alpha=0.3, label='UiS målinger')
 
 
 
+
+
+#plt.hist(lufttemperatur_met, bins=range(int(min(lufttemperatur_met)), int(max(lufttemperatur_met)) + 1), 
+ #        color='skyblue', edgecolor='black', alpha=0.9, label='Meteorologiske målinger')
+#plt.hist(temperatur, bins=range(int(min(temperatur)), int(max(temperatur)) + 1), 
+ #    color='salmon', edgecolor='black', alpha=0.3, label='UiS målinger')
+
+# Legg til etiketter og tittel
+plt.xlabel('Temperatur (°C)')
+plt.ylabel('Frekvens')
+plt.title('Histogram av temperaturer fra begge datasett')
+plt.legend()
+plt.show()
 
 
 
