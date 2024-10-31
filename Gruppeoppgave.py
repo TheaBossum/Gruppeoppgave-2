@@ -211,6 +211,53 @@ plt.legend()
 plt.show()
 
 
+#2d)
+
+tid_sirdal = []
+lufttemp_sirdal = []
+lufttrykk_sirdal = []
+tid_sauda = []
+lufttemp_sauda = []
+lufttrykk_sauda = []
+
+with open("temperatur_trykk_sauda_sinnes_samme_tidsperiode.csv.txt", "r") as fil:
+    for linje in fil:
+        data = linje.strip().split(";")
+        sted = data[0]
+        tid = data[2]
+        lufttemp = data[3]
+        lufttrykk = data[4]
+        if "-" in sted:
+           tid_sirdal.append(tid) 
+           lufttemp_sirdal.append()
+        else:
+           tid_sauda.append(tid) 
+        
+        
+        try:
+            if "am" in tiden or "pm" in tiden:      #Tar hensyn til pm og am
+                dato_object = datetime.datetime.strptime(tiden, "%d/%m/%Y %I:%M:%S %p") 
+            else:
+                dato_object = datetime.datetime.strptime(tiden, "%d.%m.%Y %H:%M")
+        except ValueError:
+            pass
+        
+        
+
+           
+ tid_standard = dato_obj.strftime("%Y-%m-%d %H:%M:%S")
+            lufttemperatur_float= float(temperaturen)
+            lufttrykk_float= float(trykk)
+            tid_met.append(tid_standard)
+            lufttemperatur_met.append(lufttemperatur_float)
+            lufttrykk_met.append(lufttrykk_float)
+        
+
+plt.plot()
+
+
+
+
 
 
 
