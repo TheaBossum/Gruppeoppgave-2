@@ -10,6 +10,7 @@ Created on Tue Oct  8 11:01:35 2024
 import datetime
 import matplotlib.pyplot as plt
 
+
 #Lager et funksjon for å finne et glidende gjennomsnitt for et gitt temperatur-datasett over en spesifikk tidsperiode
 def glidende_gjennomsnitt(tid, temperatur, n):
     gyldige_tider = []
@@ -174,8 +175,13 @@ plt.subplot(2, 1, 1)
 plt.plot(tider_met_dt, lufttemperatur_met, label="Meterologisk")
 plt.plot(tider_dt, temperatur, label="UiS")
 plt.plot(gyldige_tider, gjennomsnitt, label="Gjennomsnittstemperatur")
+
 plt.plot(temperaturfall_tider, temperaturfall_values, label="Temperaturfall fil 2")
 plt.plot(temperaturfall_tider1, temperaturfall_values1, label= "Temperaturfall fil 1")
+
+plt.plot(temperaturfall_tider, temperaturfall_values, label="Temperaturfall Maksimal til Minimal")
+plt.plot(temperaturfall_tider1, temperaturfall_values1, label = 'Temperaturfall fil 2')
+
 plt.xlabel("Tid")
 plt.ylabel("Temperatur")
 plt.tight_layout()
@@ -192,13 +198,46 @@ plt.legend()
 plt.tight_layout()
 plt.show()
 
+#HISTOGRAM
+plt.figure(figsize=(10, 6))
+plt.subplot(1, 2, 2)
+plt.hist(lufttemperatur_met, bins=range(int(min(lufttemperatur_met)), int(max(lufttemperatur_met)) + 1), color='skyblue', edgecolor='black', alpha=0.7, label='Meteorologiske målinger')
+plt.xlabel('Temperatur (°C)')
+plt.ylabel('Frekvens')
+plt.title('Histogram av temp fra fil 1')
+plt.legend()
 
+plt.subplot(1, 2, 1)
+plt.hist(temperatur, bins=range(int(min(temperatur)), int(max(temperatur)) + 1), color='salmon', edgecolor='black', alpha=0.3, label='UiS målinger')
+plt.xlabel('Temperatur (°C)')
+plt.ylabel('Frekvens')
+plt.title('Histogram av temp fra begge fil 2')
 
+plt.legend()
+plt.show()
 
-
-
-
-
+#                                 
+with open("temperatur_trykk_sauda_sinnes_samme_tidsperiode.csv.txt", "r") as fil: #Åpner og leser av fil
+    for linje in fil:
+        data = linje.strip().split(";")
+        if len(data)>=5:
+            tiden=data[2]  
+            temperaturen= data[3].replace(',', '.')
+            trykk= data[4].replace(",",".")
+            try:
+                if "am" in tiden or "pm" in tiden:      #Tar hensyn til pm og am
+                    dato_obj = datetime.datetime.strptime(tiden, "%d/%m/%Y %I:%M:%S %p") 
+                else:
+                    dato_obj = datetime.datetime.strptime(tiden, "%d.%m.%Y %H:%M")
+                
+                tid_standard = dato_obj.strftime("%Y-%m-%d %H:%M:%S")
+                lufttemperatur_float= float(temperaturen)
+                lufttrykk_float= float(trykk)
+                tid_met.append(tid_standard)
+                lufttemperatur_met.append(lufttemperatur_float)
+                lufttrykk_met.append(lufttrykk_float)
+            except ValueError:
+                pass
 
 
 
