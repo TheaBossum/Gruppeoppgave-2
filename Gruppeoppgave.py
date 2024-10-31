@@ -141,25 +141,53 @@ if temperaturer_uis_filtered:
 else:
     temperaturfall_tider = []
     temperaturfall_values = []
+    
+    
+start_tid1 = datetime.datetime(2021, 6, 11, 17, 31)
+slutt_tid1 = datetime.datetime(2021, 6, 12, 3, 5)
+
+temperaturer_uis_filtered1 = []
+tider_uis_filtered1 = []
+
+
+for tiden, temperaturen in zip(tider_met_dt, lufttemperatur_met):
+    if start_tid1 <= tiden <= slutt_tid1:
+        tider_uis_filtered1.append(tiden)
+        temperaturer_uis_filtered1.append(temperaturen)
+
+if temperaturer_uis_filtered:
+    max_temp1 = max(temperaturer_uis_filtered1)
+    min_temp1 = min(temperaturer_uis_filtered1)
+
+    temperaturfall_tider1 = [start_tid1, slutt_tid1]
+    temperaturfall_values1 = [max_temp1, min_temp1]
+    
+    
+else:
+    temperaturfall_tider1 = []
+    temperaturfall_values1 = []  
 
 #Oppgave f), g), h) og i)
 # Plotting
+plt.figure(figsize=(10, 6))
+plt.subplot(2, 1, 1)
 plt.plot(tider_met_dt, lufttemperatur_met, label="Meterologisk")
 plt.plot(tider_dt, temperatur, label="UiS")
 plt.plot(gyldige_tider, gjennomsnitt, label="Gjennomsnittstemperatur")
 plt.plot(temperaturfall_tider, temperaturfall_values, label="Temperaturfall Maksimal til Minimal")
+plt.plot(temperaturfall_tider1, temperaturfall_values1)
 plt.xlabel("Tid")
 plt.ylabel("Temperatur")
 plt.legend()
-plt.show()
 
+
+plt.subplot(2, 1, 2)
 plt.plot(tider_met_dt, lufttrykk_met, label = "Absoluttrykk MET")
 plt.plot(tider_dt, trykk_abs, label = "Absoluttrykk")
 plt.plot(tider_baro_dt, trykk_bar, label = "Barometrisk trykk")
 plt.xlabel("Tid")
 plt.ylabel("Trykk")
 plt.legend()
-plt.xticks(rotation=45)
 plt.tight_layout()
 plt.show()
 
