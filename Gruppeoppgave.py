@@ -220,26 +220,43 @@ plt.show()
 with open("temperatur_trykk_sauda_sinnes_samme_tidsperiode.csv.txt", "r") as fil: #Åpner og leser av fil
     for linje in fil:
         data = linje.strip().split(";")
+
         if len(data)>=5:
             tiden=data[2]  
             temperaturen= data[3].replace(',', '.')
             trykk= data[4].replace(",",".")
-            try:
-                if "am" in tiden or "pm" in tiden:      #Tar hensyn til pm og am
-                    dato_obj = datetime.datetime.strptime(tiden, "%d/%m/%Y %I:%M:%S %p") 
-                else:
-                    dato_obj = datetime.datetime.strptime(tiden, "%d.%m.%Y %H:%M")
-                
-                tid_standard = dato_obj.strftime("%Y-%m-%d %H:%M:%S")
-                lufttemperatur_float= float(temperaturen)
-                lufttrykk_float= float(trykk)
-                tid_met.append(tid_standard)
-                lufttemperatur_met.append(lufttemperatur_float)
-                lufttrykk_met.append(lufttrykk_float)
-            except ValueError:
-                pass
-
-
-
-
-
+    
+        if "-" in data:
+            sted1 = data[0]
+            tid1 = data[2]
+            lufttemp1 = data[3].replace(',', '.')
+            lufttrykk1 = data[4].replace(",",".")
+        else:
+           sted2 = data[0]
+           tid2 = data[2]
+           lufttemp2 = data[3].replace(',', '.')
+           lufttrykk2 = data[4].replace(',', '.')
+          
+        try:
+            if "." in data:
+               dato_object = datetime.datetime.strptime(tiden, "%d.%m.%Y %H:%M")   
+          
+            lufttemp1_float = float(lufttemp1)
+            lufttrykk1_float = float(lufttrykk1)
+            lufttemp2_float = float(lufttemp2)
+            lufttrykk2_float = float(lufttrykk2)
+            
+            tid_sirdal.append(tid1) 
+            lufttemp_sirdal.append(lufttemp1_float)
+            lufttrykk_sirdal.append(lufttrykk1_float)
+            
+            tid_sauda.append(tid2) 
+            lufttemp_sauda.append(lufttemp2_float)
+            lufttrykk_sauda.append(lufttrykk2_float)
+            
+        except ValueError:
+           pass    
+           
+           
+           
+        
