@@ -63,16 +63,14 @@ with open("temperatur_trykk_met_samme_rune_time_datasett.csv.txt", "r") as fil: 
 with open("trykk_og_temperaturlogg_rune_time.csv.txt", "r") as fil:
     for linje in fil:
         data = linje.strip().split(";")
-        if len(data) >= 5:
-            # Hent dato og tid
-            tiden=data[0]
-            # Hent verdier og erstatt komma med punktum
-            trykk_baro= data[2].replace(",", ".")
+        if len(data) >= 5:            
+            tiden=data[0]                                # Hent dato og tid
+            trykk_baro= data[2].replace(",", ".")        # Hent verdier og erstatt komma med punktum
             trykk_abso= data[3].replace(",", ".")
             temperaturen= data[4].replace(",", ".")
         
-        # Sjekk om barometertrykk er en tom streng
-            if trykk_baro == (''):
+        
+            if trykk_baro == (''):                   # Sjekk om barometertrykk er en tom streng
                 try:
                    if "am" in tiden or "pm" in tiden:    #Tar hensyn til pm og am
                        if " 00:" in tiden:
@@ -109,19 +107,18 @@ with open("trykk_og_temperaturlogg_rune_time.csv.txt", "r") as fil:
                     tid.append(tid_standard)
                     temperatur.append(temperatur_float)
                     trykk_abs.append(trykk_abs_float)
-                except ValueError:
-                # Hopp over linjer som ikke kan konverteres til float
-                    pass
+                except ValueError:                                              
+                    pass                                            # Hopp over linjer som ikke kan konverteres til float 
 tider_met_dt = [datetime.datetime.strptime(tiden, "%Y-%m-%d %H:%M:%S") for tiden in tid_met]
 tider_dt = [datetime.datetime.strptime(tiden, "%Y-%m-%d %H:%M:%S") for tiden in tid]
 tider_baro_dt = [datetime.datetime.strptime(tiden, "%Y-%m-%d %H:%M:%S") for tiden in tid_bar]
 
-#Bruker funksjon laget for oppgave g)
-n=30
+
+n=30                                                                              #Bruker funksjon laget for oppgave g)
 gyldige_tider, gjennomsnitt = glidende_gjennomsnitt(tider_dt, temperatur, n)
 
-#En del av oppgave h)
-start_tid = datetime.datetime(2021, 6, 11, 17, 31)
+
+start_tid = datetime.datetime(2021, 6, 11, 17, 31)        #En del av oppgave h)
 slutt_tid = datetime.datetime(2021, 6, 12, 3, 5)
 
 temperaturer_uis_filtered = []
@@ -168,7 +165,7 @@ else:
     temperaturfall_values1 = []  
 
 #Oppgave f), g), h) og i)
-# Plotting
+
 plt.figure(figsize=(10, 6))
 plt.subplot(2, 1, 1)
 plt.plot(tider_met_dt, lufttemperatur_met, label="Meterologisk")
@@ -197,10 +194,6 @@ plt.tight_layout()
 plt.show()
 
 
-#sammenslåtte_temperaturer = []
-#sammenslåtte_temperaturer.append(lufttemperatur_met)
-#sammenslåtte_temperaturer.append(temperatur)
-
 
 
 plt.subplot(1, 2, 1)
@@ -227,11 +220,22 @@ lufttemp_sauda = []
 lufttrykk_sauda = []
 
 
+
+n = 24
 lufttemp1 = lufttrykk1 = lufttemp2 = lufttrykk2 = None
+
 with open("temperatur_trykk_sauda_sinnes_samme_tidsperiode.csv.txt", "r") as fil:
-    for linje in fil:
+    linjer = fil.readlines()
+    linjer = linjer[n:]         # Behold linjene etter de første n linjene
+
+with open("temperatur_trykk_sauda_sinnes_samme_tidsperiode.csv.txt", "w") as fil:   # Skriv de gjenværende linjene tilbake til filen
+    fil.writelines(linjer)
+
+
+    
+    for linje in data:
         data = linje.strip().split(";")
-        if "-" in data:
+        if "Sirdal" in data:
             sted1 = data[0]
             tid1 = data[2]
             lufttemp1 = data[3].replace(',', '.')
@@ -244,8 +248,9 @@ with open("temperatur_trykk_sauda_sinnes_samme_tidsperiode.csv.txt", "r") as fil
           
         try:
             if "." in data:
-               dato_object = datetime.datetime.strptime(tiden, "%d.%m.%Y %H:%M")   
-          
+               dato_object = datetime.datetime.strptime(tid1, "%d.%m.%Y %H:%M")   
+               dato_object = datetime.datetime.strptime(tid2, "%d.%m.%Y %H:%M")   
+
             if lufttemp1 is not None and lufttrykk1 is not None:    
                 lufttemp1_float = float(lufttemp1)
                 lufttrykk1_float = float(lufttrykk1)
@@ -266,8 +271,6 @@ with open("temperatur_trykk_sauda_sinnes_samme_tidsperiode.csv.txt", "r") as fil
            
            
           
-           
-            
 plt.plot()
 
 
