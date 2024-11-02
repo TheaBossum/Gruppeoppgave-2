@@ -141,7 +141,7 @@ else:
     temperaturfall_tider = []
     temperaturfall_values = []
     
-    
+#Øving 10 oppgave a)   
 start_tid1 = datetime.datetime(2021, 6, 11, 17, 31)
 slutt_tid1 = datetime.datetime(2021, 6, 12, 3, 5)
 
@@ -174,6 +174,8 @@ plt.plot(tider_met_dt, lufttemperatur_met, label="Meterologisk")
 plt.plot(tider_dt, temperatur, label="UiS")
 plt.plot(gyldige_tider, gjennomsnitt, label="Gjennomsnittstemperatur")
 plt.plot(temperaturfall_tider, temperaturfall_values, label="Temperaturfall Maksimal til Minimal")
+
+#Øving 10 oppgave a)
 plt.plot(temperaturfall_tider1, temperaturfall_values1, label = 'Temperaturfall fil 2')
 plt.xlabel("Tid")
 plt.ylabel("Temperatur")
@@ -190,7 +192,7 @@ plt.legend()
 plt.tight_layout()
 plt.show()
 
-
+#Øving 10 oppgave b)
 plt.figure(figsize=(10, 6))
 plt.subplot(1, 2, 1)
 plt.hist(lufttemperatur_met, bins=range(int(min(lufttemperatur_met)), int(max(lufttemperatur_met)) + 1), color='skyblue', edgecolor='black', alpha=0.7, label='Meteorologiske målinger')
@@ -207,8 +209,40 @@ plt.title("Histogram av temperaturer fil 2")
 plt.legend()
 plt.show()
 
+#Øving 10 oppgave c)
+import numpy as np
 
-#2d)
+def finn_og_plott_differanse(trykk_bar, trykk_abs):
+    """
+    Finner og plotter differansen mellom to lister, ekskluderer tomme strenger.
+    Beregner glidende gjennomsnitt for å redusere støy.
+
+    Args:
+        trykk_bar (list): Liste med barometrisk trykk.
+        trykk_abs (list): Liste med absolutt trykk.
+    """
+
+    # Finn indekser med gyldige verdier
+    indekser_med_verdier = [i for i in range(len(trykk_bar)) if trykk_bar[i] != "" and trykk_abs[i] != ""]
+
+    # Beregn differansen
+    differanse = [abs(float(trykk_bar[i]) - float(trykk_abs[i])) for i in indekser_med_verdier]
+
+    # Beregn glidende gjennomsnitt (vindu på 21)
+    glidende_gjennomsnitt = np.convolve(differanse, np.ones(21)/21, mode='valid')
+
+    # Plott resultatet
+    plt.plot(indekser_med_verdier[10:-10], glidende_gjennomsnitt)
+    plt.xlabel("Indeks")
+    plt.ylabel("Gjennomsnittlig absolutt differanse")
+    plt.title("Differanse mellom trykk, glidende gjennomsnitt")
+    plt.show()
+
+
+# Kall funksjonen
+finn_og_plott_differanse(trykk_bar, trykk_abs)
+
+#Øving 10 oppgave d)
 tid_sirdal = []
 lufttemp_sirdal = []
 lufttrykk_sirdal = []
