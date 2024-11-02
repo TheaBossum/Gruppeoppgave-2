@@ -1,9 +1,8 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Oct  8 11:01:35 2024
+Created on Sat Nov  2 16:17:20 2024
 
-@author: sara
+@author: hegee
 """
 
 #En del av oppgave g)
@@ -218,50 +217,61 @@ tid_sauda = []
 lufttemp_sauda = []
 lufttrykk_sauda = []
 
-
-lufttemp1 = lufttrykk1 = lufttemp2 = lufttrykk2 = None                                 
+sirdal_data = []
+sauda_data = []
+                                 
 
 with open("temperatur_trykk_sauda_sinnes_samme_tidsperiode.csv.txt", "r") as fil:
     for linje in fil:
         data = linje.strip().split(";")
-
-        if "-" in data:
-            sted1 = data[0]
-            tid1 = data[2]
-            lufttemp1 = data[3].replace(',', '.')
-            lufttrykk1 = data[4].replace(",",".")
-        else:
-           sted2 = data[0]
-           tid2 = data[2]
-           lufttemp2 = data[3].replace(',', '.')
-           lufttrykk2 = data[4].replace(',', '.')
-          
-        try:
-            if "." in data:
-               dato_object = datetime.datetime.strptime(tiden, "%d.%m.%Y %H:%M")   
-          
-            
-            if lufttemp1 is not None and lufttrykk1 is not None:
-                lufttemp1_float = float(lufttemp1)
-                lufttrykk1_float = float(lufttrykk1)
-                tid_sirdal.append(tid1)
-                lufttemp_sirdal.append(lufttemp1_float)
-                lufttrykk_sirdal.append(lufttrykk1_float)
-
-            if lufttemp2 is not None and lufttrykk2 is not None:
-                lufttemp2_float = float(lufttemp2)
-                lufttrykk2_float = float(lufttrykk2)
-                tid_sauda.append(tid2)
-                lufttemp_sauda.append(lufttemp2_float)
-                lufttrykk_sauda.append(lufttrykk2_float)
-
+        sted = data[0]
+        tid = data[2]
+        lufttemp = data[3].replace(',', '.')
+        lufttrykk = data[4].replace(",",".")
+        
+        try: 
+            tid_obj = datetime.datetime.strptime(tid, "%d.%m.%Y %H:%M")
+            ny_tid = tid_obj.strftime("%Y-%m-%d %H:%M:%S")
         except ValueError:
-            pass  
-           
-plt.figure(figsize=(10, 6))
+            continue
+       
+        if sted == 'Sirdal - Sinnes':
+           sirdal_data.append((ny_tid, float(lufttemp), float(lufttrykk)))
+        elif sted == 'Sauda':
+            sauda_data.append((ny_tid, float(lufttemp), float(lufttrykk)))
+# Hente ut tid, temperatur og trykk fra Sirdal
+sirdal_tid = [entry[0] for entry in sirdal_data]
+sirdal_temp = [entry[1] for entry in sirdal_data]
+sirdal_trykk = [entry[2] for entry in sirdal_data]
 
-    
-           
+# Hente ut tid, temperatur og trykk fra Sauda
+sauda_tid = [entry[0] for entry in sauda_data]
+sauda_temp = [entry[1] for entry in sauda_data]
+sauda_trykk = [entry[2] for entry in sauda_data] 
+
+ 
+        
+plt.figure(figsize=(10, 6))
+plt.subplot(2,2,1)
+plt.plot(sirdal_tid, sirdal_temp)
+plt.plot(sauda_tid, sauda_temp)
+plt.plot(tid_met, lufttemperatur_met)
+plt.title('Temperatur')
+plt.xlabel('Tid')
+plt.ylabel('Temperatur (°C)')
+
+
+plt.subplot(2,2,2)
+plt.plot(sirdal_tid, sirdal_trykk)
+plt.plot(sauda_tid, sauda_trykk)
+plt.plot(tid_met, lufttrykk_met)
+plt.title('Trykk')
+plt.xlabel('Tid')
+plt.ylabel('Trykk (hPa)')
+
+
+plt.show()   
+      
 
         
         
