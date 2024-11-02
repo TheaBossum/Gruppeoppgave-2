@@ -174,13 +174,18 @@ plt.subplot(2, 1, 1)
 plt.plot(tider_met_dt, lufttemperatur_met, label="Meterologisk")
 plt.plot(tider_dt, temperatur, label="UiS")
 plt.plot(gyldige_tider, gjennomsnitt, label="Gjennomsnittstemperatur")
+
+
 plt.plot(temperaturfall_tider, temperaturfall_values, label="Temperaturfall Maksimal til Minimal")
+
+#Oppgave 2
+#a)
 plt.plot(temperaturfall_tider1, temperaturfall_values1, label = 'Temperaturfall fil 2')
 plt.xlabel("Tid")
 plt.ylabel("Temperatur")
 plt.legend()
 
-
+#b)
 plt.subplot(2, 1, 2)
 plt.plot(tider_met_dt, lufttrykk_met, label = "Absoluttrykk MET")
 plt.plot(tider_dt, trykk_abs, label = "Absoluttrykk")
@@ -196,7 +201,7 @@ plt.show()
 #sammenslåtte_temperaturer.append(lufttemperatur_met)
 #sammenslåtte_temperaturer.append(temperatur)
 
-#plt.hist(sammenslåtte_temperaturer)
+
 
 plt.subplot(1, 2, 1)
 plt.hist(lufttemperatur_met, bins=range(int(min(lufttemperatur_met)), int(max(lufttemperatur_met)) + 1), color='skyblue', edgecolor='black', alpha=0.7, label='Meteorologiske målinger')
@@ -210,6 +215,7 @@ plt.title('Histogram av temperaturer fra begge datasett')
 plt.legend()
 plt.show()
 
+#c) 
 
 #2d)
 
@@ -220,6 +226,8 @@ tid_sauda = []
 lufttemp_sauda = []
 lufttrykk_sauda = []
 
+
+lufttemp1 = lufttrykk1 = lufttemp2 = lufttrykk2 = None
 with open("temperatur_trykk_sauda_sinnes_samme_tidsperiode.csv.txt", "r") as fil:
     for linje in fil:
         data = linje.strip().split(";")
@@ -238,18 +246,19 @@ with open("temperatur_trykk_sauda_sinnes_samme_tidsperiode.csv.txt", "r") as fil
             if "." in data:
                dato_object = datetime.datetime.strptime(tiden, "%d.%m.%Y %H:%M")   
           
-            lufttemp1_float = float(lufttemp1)
-            lufttrykk1_float = float(lufttrykk1)
-            lufttemp2_float = float(lufttemp2)
-            lufttrykk2_float = float(lufttrykk2)
-            
-            tid_sirdal.append(tid1) 
-            lufttemp_sirdal.append(lufttemp1_float)
-            lufttrykk_sirdal.append(lufttrykk1_float)
-            
-            tid_sauda.append(tid2) 
-            lufttemp_sauda.append(lufttemp2_float)
-            lufttrykk_sauda.append(lufttrykk2_float)
+            if lufttemp1 is not None and lufttrykk1 is not None:    
+                lufttemp1_float = float(lufttemp1)
+                lufttrykk1_float = float(lufttrykk1)
+                tid_sirdal.append(tid1) 
+                lufttemp_sirdal.append(lufttemp1_float)
+                lufttrykk_sirdal.append(lufttrykk1_float)
+                
+            if lufttemp2 is not None and lufttrykk2 is not None:  
+                lufttemp2_float = float(lufttemp2)
+                lufttrykk2_float = float(lufttrykk2)
+                tid_sauda.append(tid2) 
+                lufttemp_sauda.append(lufttemp2_float)
+                lufttrykk_sauda.append(lufttrykk2_float)
             
         except ValueError:
            pass    
@@ -259,16 +268,6 @@ with open("temperatur_trykk_sauda_sinnes_samme_tidsperiode.csv.txt", "r") as fil
           
            
             
-        
-        
-        
-        
-        
-
-           
-
-        
-
 plt.plot()
 
 
