@@ -216,15 +216,22 @@ plt.title('Histogram av temp fra begge fil 2')
 plt.legend()
 plt.show()
 
-#                                 
+#    
+tid_sirdal = []
+lufttemp_sirdal = []
+lufttrykk_sirdal = []
+
+tid_sauda = []
+lufttemp_sauda = []
+lufttrykk_sauda = []
+
+lufttemp1 = lufttrykk1 = lufttemp2 = lufttrykk2 = None                             
 with open("temperatur_trykk_sauda_sinnes_samme_tidsperiode.csv.txt", "r") as fil: #Åpner og leser av fil
     for linje in fil:
         data = linje.strip().split(";")
-
-        if len(data)>=5:
-            tiden=data[2]  
-            temperaturen= data[3].replace(',', '.')
-            trykk= data[4].replace(",",".")
+        tiden=data[2]  
+        temperaturen= data[3].replace(',', '.')
+        trykk= data[4].replace(",",".")
     
         if "-" in data:
             sted1 = data[0]
@@ -241,22 +248,24 @@ with open("temperatur_trykk_sauda_sinnes_samme_tidsperiode.csv.txt", "r") as fil
             if "." in data:
                dato_object = datetime.datetime.strptime(tiden, "%d.%m.%Y %H:%M")   
           
-            lufttemp1_float = float(lufttemp1)
-            lufttrykk1_float = float(lufttrykk1)
-            lufttemp2_float = float(lufttemp2)
-            lufttrykk2_float = float(lufttrykk2)
             
-            tid_sirdal.append(tid1) 
-            lufttemp_sirdal.append(lufttemp1_float)
-            lufttrykk_sirdal.append(lufttrykk1_float)
-            
-            tid_sauda.append(tid2) 
-            lufttemp_sauda.append(lufttemp2_float)
-            lufttrykk_sauda.append(lufttrykk2_float)
-            
+            if lufttemp1 is not None and lufttrykk1 is not None:
+                lufttemp1_float = float(lufttemp1)
+                lufttrykk1_float = float(lufttrykk1)
+                tid_sirdal.append(tid1)
+                lufttemp_sirdal.append(lufttemp1_float)
+                lufttrykk_sirdal.append(lufttrykk1_float)
+
+            if lufttemp2 is not None and lufttrykk2 is not None:
+                lufttemp2_float = float(lufttemp2)
+                lufttrykk2_float = float(lufttrykk2)
+                tid_sauda.append(tid2)
+                lufttemp_sauda.append(lufttemp2_float)
+                lufttrykk_sauda.append(lufttrykk2_float)
+
         except ValueError:
-           pass    
+            pass  
            
-           
+     
            
         
