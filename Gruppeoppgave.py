@@ -273,7 +273,38 @@ with open("temperatur_trykk_sauda_sinnes_samme_tidsperiode.csv.txt", "w") as fil
           
 plt.plot()
 
+#Oppgave c)
+import numpy as np
 
+def finn_og_plott_differanse(trykk_bar, trykk_abs):
+    """
+    Finner og plotter differansen mellom to lister, ekskluderer tomme strenger.
+    Beregner glidende gjennomsnitt for å redusere støy.
+
+    Args:
+        trykk_bar (list): Liste med barometrisk trykk.
+        trykk_abs (list): Liste med absolutt trykk.
+    """
+
+    # Finn indekser med gyldige verdier
+    indekser_med_verdier = [i for i in range(len(trykk_bar)) if trykk_bar[i] != "" and trykk_abs[i] != ""]
+
+    # Beregn differansen
+    differanse = [abs(float(trykk_bar[i]) - float(trykk_abs[i])) for i in indekser_med_verdier]
+
+    # Beregn glidende gjennomsnitt (vindu på 21)
+    glidende_gjennomsnitt = np.convolve(differanse, np.ones(21)/21, mode='valid')
+
+    # Plott resultatet
+    plt.plot(indekser_med_verdier[10:-10], glidende_gjennomsnitt)
+    plt.xlabel("Indeks")
+    plt.ylabel("Gjennomsnittlig absolutt differanse")
+    plt.title("Differanse mellom trykk, glidende gjennomsnitt")
+    plt.show()
+
+
+# Kall funksjonen
+finn_og_plott_differanse(trykk_bar, trykk_abs)
 
 
 
