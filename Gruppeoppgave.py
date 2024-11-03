@@ -7,6 +7,7 @@ Created on Tue Oct  8 11:01:35 2024
 """
 
 #En del av oppgave g)
+import math
 import datetime
 import matplotlib.pyplot as plt
 
