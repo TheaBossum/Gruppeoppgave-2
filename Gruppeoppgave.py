@@ -10,7 +10,31 @@ Created on Tue Oct  8 11:01:35 2024
 import datetime
 import matplotlib.pyplot as plt
 
-#Lager et funksjon for å finne et glidende gjennomsnitt for et gitt temperatur-datasett over en spesifikk tidsperiode
+# Funksjoner
+# Funksjon for gyldige tidspunkter og moving averages
+def averages_avvik(liste_tidspunkter, liste_temperaturer, n):
+    # Finn gyldige tidspunkter
+    gyldige_tidspunkter = []
+    moving_averages = []
+    moving_std_avvik = []
+    
+    # Finn moving average og std_avvik
+    for i in range(n, len(liste_temperaturer)-n):
+        window = liste_temperaturer[i-n:i+n+1]
+        # Beregn gjennomsnitt
+        average = round(sum(window) / len(window),2)
+        # Beregn std_avvik
+        sum_avvik = 0
+        for y in window:
+            sum_avvik += (y-average)**2
+        std_avvik = round(math.sqrt(sum_avvik/(len(window)-1)), 2)
+        # Fyll listene 
+        moving_averages.append(average)
+        moving_std_avvik.append(std_avvik)
+        gyldige_tidspunkter.append(liste_tidspunkter[i])
+    return gyldige_tidspunkter, moving_averages, moving_std_avvik 
+"""
+KAN SLETTE DENNE. #Lager et funksjon for å finne et glidende gjennomsnitt for et gitt temperatur-datasett over en spesifikk tidsperiode
 def glidende_gjennomsnitt(tid, temperatur, n):
     gyldige_tider = []
     gjennomsnitt =[]
@@ -23,13 +47,18 @@ def glidende_gjennomsnitt(tid, temperatur, n):
         gjennomsnitt.append(gjennomsnitt_verdi)
 
     return gyldige_tider, gjennomsnitt
+"""
 
 #Oppgave e)
 # Initialiser lister for hver kolonne i filene
+
+# Lister for Meteriologisk
 lufttemperatur_met = []
 tid_met = []
 lufttrykk_met = []
 lufttemperatur= []
+
+# Lister for UIS
 tid= []
 temperatur = []
 tid_bar = []
@@ -116,9 +145,14 @@ tider_met_dt = [datetime.datetime.strptime(tiden, "%Y-%m-%d %H:%M:%S") for tiden
 tider_dt = [datetime.datetime.strptime(tiden, "%Y-%m-%d %H:%M:%S") for tiden in tid]
 tider_baro_dt = [datetime.datetime.strptime(tiden, "%Y-%m-%d %H:%M:%S") for tiden in tid_bar]
 
+# Finn glidende gjennomsnitt og standardavvik for UIS-målingene
+gyldige_tider_uis, gjennomsnitt_uis, std_avvik_uis = averages_avvik(tider_dt, temperatur, 10)
+
+"""
 #Bruker funksjon laget for oppgave g)
 n=30
 gyldige_tider, gjennomsnitt = glidende_gjennomsnitt(tider_dt, temperatur, n)
+"""
 
 #En del av oppgave h)
 start_tid = datetime.datetime(2021, 6, 11, 17, 31)
@@ -173,7 +207,8 @@ plt.figure(figsize=(10, 6))
 plt.subplot(2, 1, 1)
 plt.plot(tider_met_dt, lufttemperatur_met, label="Meterologisk")
 plt.plot(tider_dt, temperatur, label="UiS")
-plt.plot(gyldige_tider, gjennomsnitt, label="Gjennomsnittstemperatur")
+plt.plot(gyldige_tider_uis, gjennomsnitt_uis, label="Gjennomsnittstemperatur") # Plotter gjennomsnittsverdier
+plt.plot(gyldige_tider_uis, std_avvik_uis, label="Std.avvik")
 plt.plot(temperaturfall_tider, temperaturfall_values, label="Temperaturfall Maksimal til Minimal")
 plt.plot(temperaturfall_tider1, temperaturfall_values1, label = 'Temperaturfall fil 2')
 plt.xlabel("Tid")
@@ -192,80 +227,80 @@ plt.tight_layout()
 plt.show()
 
 
-plt.figure(figsize=(10, 6))
+#sammenslåtte_temperaturer = []
+#sammenslåtte_temperaturer.append(lufttemperatur_met)
+#sammenslåtte_temperaturer.append(temperatur)
+
+#plt.hist(sammenslåtte_temperaturer)
+
 plt.subplot(1, 2, 1)
 plt.hist(lufttemperatur_met, bins=range(int(min(lufttemperatur_met)), int(max(lufttemperatur_met)) + 1), color='skyblue', edgecolor='black', alpha=0.7, label='Meteorologiske målinger')
-plt.xlabel('Temperatur (°C)')
-plt.ylabel('Frekvens')
-plt.title('Histogram av temperaturer fil 1')
-plt.legend()
-
 plt.subplot(1, 2, 2)
 plt.hist(temperatur, bins=range(int(min(temperatur)), int(max(temperatur)) + 1), color='salmon', edgecolor='black', alpha=0.3, label='UiS målinger')
+
+
 plt.xlabel('Temperatur (°C)')
 plt.ylabel('Frekvens')
-plt.title("Histogram av temperaturer fil 2")
+plt.title('Histogram av temperaturer fra begge datasett')
 plt.legend()
 plt.show()
 
 
 #2d)
+
 tid_sirdal = []
 lufttemp_sirdal = []
 lufttrykk_sirdal = []
-
 tid_sauda = []
 lufttemp_sauda = []
 lufttrykk_sauda = []
 
-
-lufttemp1 = lufttrykk1 = lufttemp2 = lufttrykk2 = None                                 
-
 with open("temperatur_trykk_sauda_sinnes_samme_tidsperiode.csv.txt", "r") as fil:
     for linje in fil:
         data = linje.strip().split(";")
-
         if "-" in data:
             sted1 = data[0]
             tid1 = data[2]
-            lufttemp1 = data[3].replace(',', '.')
-            lufttrykk1 = data[4].replace(",",".")
+            lufttemp1 = data[3]
+            lufttrykk1 = data[4]
         else:
            sted2 = data[0]
            tid2 = data[2]
-           lufttemp2 = data[3].replace(',', '.')
-           lufttrykk2 = data[4].replace(',', '.')
-          
-        try:
-            if "." in data:
-               dato_object = datetime.datetime.strptime(tiden, "%d.%m.%Y %H:%M")   
-          
+           lufttemp2 = data[3]
+           lufttrykk2 = data[4] 
+           
+           tid_sirdal.append(tid1) 
+           lufttemp_sirdal.append(lufttemp1)
+           lufttrykk_sirdal.append(lufttrykk1)
+           tid_sauda.append(tid2) 
+           lufttemp_sauda.append(lufttemp2)
+           lufttrykk_sauda.append(lufttrykk2)
             
-            if lufttemp1 is not None and lufttrykk1 is not None:
-                lufttemp1_float = float(lufttemp1)
-                lufttrykk1_float = float(lufttrykk1)
-                tid_sirdal.append(tid1)
-                lufttemp_sirdal.append(lufttemp1_float)
-                lufttrykk_sirdal.append(lufttrykk1_float)
-
-            if lufttemp2 is not None and lufttrykk2 is not None:
-                lufttemp2_float = float(lufttemp2)
-                lufttrykk2_float = float(lufttrykk2)
-                tid_sauda.append(tid2)
-                lufttemp_sauda.append(lufttemp2_float)
-                lufttrykk_sauda.append(lufttrykk2_float)
-
+        
+        
+        try:
+            if "am" in tiden or "pm" in tiden:      #Tar hensyn til pm og am
+                dato_object = datetime.datetime.strptime(tiden, "%d/%m/%Y %I:%M:%S %p") 
+            else:
+                dato_object = datetime.datetime.strptime(tiden, "%d.%m.%Y %H:%M")
         except ValueError:
-            pass  
-           
-plt.figure(figsize=(10, 6))
+            pass
+        
+        
 
-    
            
+ tid_standard = dato_obj.strftime("%Y-%m-%d %H:%M:%S")
+            lufttemperatur_float= float(temperaturen)
+            lufttrykk_float= float(trykk)
+            tid_met.append(tid_standard)
+            lufttemperatur_met.append(lufttemperatur_float)
+            lufttrykk_met.append(lufttrykk_float)
+        
 
-        
-        
-        
+plt.plot()
+
+
+
 
 
 
