@@ -243,13 +243,6 @@ def finn_og_plott_differanse(trykk_bar, trykk_abs):
 finn_og_plott_differanse(trykk_bar, trykk_abs)
 
 #Øving 10 oppgave d)
-tid_sirdal = []
-lufttemp_sirdal = []
-lufttrykk_sirdal = []
-
-tid_sauda = []
-lufttemp_sauda = []
-lufttrykk_sauda = []
 
 sirdal_data = []
 sauda_data = []
@@ -261,7 +254,7 @@ with open("temperatur_trykk_sauda_sinnes_samme_tidsperiode.csv.txt", "r") as fil
         sted = data[0]
         tid = data[2]
         lufttemp = data[3].replace(',', '.')
-        lufttrykk = data[4].replace(",",".")
+        lufttrykk = data[4].replace(",", ".")
         
         try: 
             tid_obj = datetime.datetime.strptime(tid, "%d.%m.%Y %H:%M")
@@ -307,8 +300,52 @@ plt.ylabel('Trykk (hPa)')
 plt.show()   
       
 
+"""
+Oppgave e
+"""
+# Lag liste med like tidspunkter, og lister for temperatur og trykk for disse tidspuntene
+like_tidspunkter = list()
+liste_temp_met = list()
+liste_temp_runtime = list()
+liste_trykk_met = list()
+liste_trykk_runtime = list()
+
+for index_tid_met, tid in enumerate(tid_met):
+    tid_datetime = datetime.datetime.strptime(tid, "%Y-%m-%d %H:%M:%S")
+    if tid_datetime.minute == 0 and tid in tid_bar:
+        index_tid_bar = tid_bar.index(tid)
         
+        like_tidspunkter.append(tid)
+        liste_temp_met.append(lufttemperatur_met[index_tid_met])
+        liste_trykk_met.append(lufttrykk_met[index_tid_met])
+        liste_temp_runtime.append(temperatur[index_tid_bar])
+        liste_trykk_runtime.append(trykk_bar[index_tid_bar])
         
+# Beregne forskjeller og gjennomsnittlig forskjeller i temperatur mellom tidspunktene
+forskjeller_temp = [abs(t1 - t2) for t1, t2 in zip(liste_temp_met,liste_temp_runtime)]
+gjennomsnitt_forskjeller_temp = sum(forskjeller_temp) / len(forskjeller_temp)
+print("Gjennomsnittlig forskjell for temperatur er ", gjennomsnitt_forskjeller_temp)
+
+# Finn tidspunkt med høyest og lavest forskjell temperatur
+min_diff_temp = min(forskjeller_temp)
+max_diff_temp = max(forskjeller_temp)
+tid_min_diff_temp = like_tidspunkter[forskjeller_temp.index(min_diff_temp)]
+tid_max_diff_temp = like_tidspunkter[forskjeller_temp.index(max_diff_temp)]
+print(f"Minste temperaturforskjell er {min_diff_temp} ved tid {tid_min_diff_temp} ")
+print(f"Største temperaturforskjell er {max_diff_temp} ved tid {tid_max_diff_temp} ")
+
+# Beregne forskjeller og gjennomsnitt forskjeller i trykk
+forskjeller_trykk = [abs(p1 - p2) for p1, p2 in zip(liste_trykk_met, liste_trykk_runtime)]
+gjennomsnitt_forskjeller_trykk = sum(forskjeller_trykk) / len(forskjeller_trykk)
+print("Gjennomsnittlig forskjell for trykk er ", gjennomsnitt_forskjeller_trykk)
+
+# Finn tidspunkt med høyest og lavest forskjell trykk        
+min_diff_trykk = min(forskjeller_trykk)
+max_diff_trykk = max(forskjeller_trykk)
+tid_min_diff_trykk = like_tidspunkter[forskjeller_trykk.index(min_diff_trykk)]
+tid_max_diff_trykk = like_tidspunkter[forskjeller_trykk.index(max_diff_trykk)]
+print(f"Minste trykkforskjell er {min_diff_trykk} ved tid {tid_min_diff_trykk} ")
+print(f"Største trykkforskjell er {max_diff_trykk} ved tid {tid_max_diff_trykk} ")        
         
 
 
