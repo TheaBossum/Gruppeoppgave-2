@@ -53,16 +53,16 @@ def glidende_gjennomsnitt(tid, temperatur, n):
 #Oppgave e)
 # Initialiser lister for hver kolonne i filene
 
-# Lister for Meteriologisk
+# Lister for fil 1, Meteriologisk
 lufttemperatur_met = []
 tid_met = []
 lufttrykk_met = []
 lufttemperatur= []
 
-# Lister for UIS
-tid= []
+# Lister for  fil 2, UIS
+tid= [] # Inneholder tidspunkter for temp. og abs.trykk 
 temperatur = []
-tid_bar = []
+tid_bar = [] # Inneholder tidspunkter for både temp., abs.trykk, og barometertrykk
 trykk_abs = []
 trykk_bar=[]
 
@@ -142,8 +142,13 @@ with open("trykk_og_temperaturlogg_rune_time.csv.txt", "r") as fil:
                 except ValueError:
                 # Hopp over linjer som ikke kan konverteres til float
                     pass
+
+# LAGE DATETIME OBJEKTER FOR DE ULIKE TIDENE
+# Tider meteroilogis 
 tider_met_dt = [datetime.datetime.strptime(tiden, "%Y-%m-%d %H:%M:%S") for tiden in tid_met]
+# Tider UIS
 tider_dt = [datetime.datetime.strptime(tiden, "%Y-%m-%d %H:%M:%S") for tiden in tid]
+# 
 tider_baro_dt = [datetime.datetime.strptime(tiden, "%Y-%m-%d %H:%M:%S") for tiden in tid_bar]
 
 # Finn glidende gjennomsnitt og standardavvik for UIS-målingene
@@ -208,8 +213,12 @@ plt.figure(figsize=(10, 6))
 plt.subplot(2, 1, 1)
 plt.plot(tider_met_dt, lufttemperatur_met, label="Meterologisk")
 plt.plot(tider_dt, temperatur, label="UiS")
+
+# plott gjennomsnitt
 plt.plot(gyldige_tider_uis, gjennomsnitt_uis, label="Gjennomsnittstemperatur") # Plotter gjennomsnittsverdier
-plt.plot(gyldige_tider_uis, std_avvik_uis, label="Std.avvik")
+
+# Plott errorbars
+plt.errorbar(gyldige_tider_uis, gjennomsnitt_uis, yerr=std_avvik_uis, errorevery=8000, capsize=2, label="Std.avvik")
 plt.plot(temperaturfall_tider, temperaturfall_values, label="Temperaturfall Maksimal til Minimal")
 plt.plot(temperaturfall_tider1, temperaturfall_values1, label = 'Temperaturfall fil 2')
 plt.xlabel("Tid")
@@ -264,15 +273,15 @@ with open("temperatur_trykk_sauda_sinnes_samme_tidsperiode.csv.txt", "r") as fil
             tid1 = data[2]
             lufttemp1 = data[3]
             lufttrykk1 = data[4]
+            tid_sirdal.append(tid1)
+            lufttemp_sirdal.append(lufttemp1)
+            lufttrykk_sirdal.append(lufttrykk1)
         else:
            sted2 = data[0]
            tid2 = data[2]
            lufttemp2 = data[3]
            lufttrykk2 = data[4] 
-           
-           tid_sirdal.append(tid1) 
-           lufttemp_sirdal.append(lufttemp1)
-           lufttrykk_sirdal.append(lufttrykk1)
+          
            tid_sauda.append(tid2) 
            lufttemp_sauda.append(lufttemp2)
            lufttrykk_sauda.append(lufttrykk2)
@@ -290,15 +299,66 @@ with open("temperatur_trykk_sauda_sinnes_samme_tidsperiode.csv.txt", "r") as fil
         
 
            
- tid_standard = dato_obj.strftime("%Y-%m-%d %H:%M:%S")
-            lufttemperatur_float= float(temperaturen)
-            lufttrykk_float= float(trykk)
-            tid_met.append(tid_standard)
-            lufttemperatur_met.append(lufttemperatur_float)
-            lufttrykk_met.append(lufttrykk_float)
+tid_standard = dato_obj.strftime("%Y-%m-%d %H:%M:%S")
+lufttemperatur_float= float(temperaturen)
+lufttrykk_float= float(trykk)
+tid_met.append(tid_standard)
+lufttemperatur_met.append(lufttemperatur_float)
+lufttrykk_met.append(lufttrykk_float)
         
 
 plt.plot()
+
+"""
+Oppgave e
+"""
+# Lag liste med like tidspunkter, og lister for temperatur og trykk for disse tidspuntene
+like_tidspunkter = list()
+liste_temp_met = list()
+liste_temp_runtime = list()
+liste_trykk_met = list()
+liste_trykk_runtime = list()
+
+for index_tid_met, tid in enumerate(tid_met):
+    tid_datetime = datetime.datetime.strptime(tid, "%Y-%m-%d %H:%M:%S")
+    if tid_datetime.minute == 0 and tid in tid_bar:
+        index_tid_bar = tid_bar.index(tid)
+        
+        like_tidspunkter.append(tid)
+        liste_temp_met.append(lufttemperatur_met[index_tid_met])
+        liste_trykk_met.append(lufttrykk_met[index_tid_met])
+        liste_temp_runtime.append(temperatur[index_tid_bar])
+        liste_trykk_runtime.append(trykk_bar[index_tid_bar])
+        
+# Beregne forskjeller og gjennomsnittlig forskjeller i temperatur mellom tidspunktene
+forskjeller_temp = [abs(t1 - t2) for t1, t2 in zip(liste_temp_met,liste_temp_runtime)]
+gjennomsnitt_forskjeller_temp = sum(forskjeller_temp) / len(forskjeller_temp)
+print("Gjennomsnittlig forskjell for temperatur er ", gjennomsnitt_forskjeller_temp)
+
+# Finn tidspunkt med høyest og lavest forskjell temperatur
+min_diff_temp = min(forskjeller_temp)
+max_diff_temp = max(forskjeller_temp)
+tid_min_diff_temp = like_tidspunkter[forskjeller_temp.index(min_diff_temp)]
+tid_max_diff_temp = like_tidspunkter[forskjeller_temp.index(max_diff_temp)]
+print(f"Minste temperaturforskjell er {min_diff_temp} ved tid {tid_min_diff_temp} ")
+print(f"Største temperaturforskjell er {max_diff_temp} ved tid {tid_max_diff_temp} ")
+
+# Beregne forskjeller og gjennomsnitt forskjeller i trykk
+forskjeller_trykk = [abs(p1 - p2) for p1, p2 in zip(liste_trykk_met, liste_trykk_runtime)]
+gjennomsnitt_forskjeller_trykk = sum(forskjeller_trykk) / len(forskjeller_trykk)
+print("Gjennomsnittlig forskjell for trykk er ", gjennomsnitt_forskjeller_trykk)
+
+# Finn tidspunkt med høyest og lavest forskjell trykk
+min_diff_trykk = min(forskjeller_trykk)
+max_diff_trykk = max(forskjeller_trykk)
+tid_min_diff_trykk = like_tidspunkter[forskjeller_trykk.index(min_diff_trykk)]
+tid_max_diff_trykk = like_tidspunkter[forskjeller_trykk.index(max_diff_trykk)]
+print(f"Minste trykkforskjell er {min_diff_trykk} ved tid {tid_min_diff_trykk} ")
+print(f"Største trykkforskjell er {max_diff_trykk} ved tid {tid_max_diff_trykk} ")
+
+        
+    
+   
 
 
 
